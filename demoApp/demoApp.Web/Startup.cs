@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using demoApp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace demoApp.Web
 {
@@ -23,13 +17,21 @@ namespace demoApp.Web
 
         public static IConfiguration Configuration { get; private set; }
 
-        // This method gets called by the runtime. Use this method to add services to the container
+       
         public void ConfigureServices(IServiceCollection services)
         {
+            var connString = Configuration.GetSection("DefaultConnection").Value;
+
+            var productRepo = new ProductsRepository(connString);
+            services.Add(new ServiceDescriptor(typeof(ProductsRepository), productRepo));
+
+            var userRepo = new UserRepository(connString);
+            services.Add(new ServiceDescriptor(typeof(UserRepository), userRepo));
+
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
+      
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

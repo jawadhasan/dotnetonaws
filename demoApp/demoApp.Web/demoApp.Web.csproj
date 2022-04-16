@@ -9,4 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\demoApp.Data\demoApp.Data.csproj" />
+  </ItemGroup>
 </Project>
