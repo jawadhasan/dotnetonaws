@@ -1,4 +1,8 @@
+using Amazon;
+using Amazon.DynamoDBv2;
+using Amazon.Extensions.NETCore.Setup;
 using demoApp.Data;
+using demoApp.Web.Dynamo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +33,15 @@ namespace demoApp.Web
             services.Add(new ServiceDescriptor(typeof(UserRepository), userRepo));
 
             services.AddControllers();
+
+            //AWS Services
+            services.AddAWSService<IAmazonDynamoDB>();
+            services.AddDefaultAWSOptions(new AWSOptions
+            {
+                Region = RegionEndpoint.GetBySystemName("eu-central-1")//can read from appsetting.json
+            });
+            services.AddSingleton<TruckSensorRepo>();
+
         }
 
       
