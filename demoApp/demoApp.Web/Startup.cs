@@ -33,7 +33,7 @@ namespace demoApp.Web
             var userRepo = new UserRepository(connString);
             services.Add(new ServiceDescriptor(typeof(UserRepository), userRepo));
 
-            services.AddControllers();
+         
 
             //AWS Services
             services.AddAWSService<IAmazonDynamoDB>();
@@ -42,6 +42,23 @@ namespace demoApp.Web
                 Region = RegionEndpoint.GetBySystemName("eu-central-1")//can read from appsetting.json
             });
             services.AddSingleton<TruckSensorRepo>();
+
+            services.AddControllers();
+
+            //services.AddAuthorization();
+            //services.AddAuthentication("Bearer")
+            //    .AddJwtBearer("Bearer", options =>
+            //    {
+            //        options.IncludeErrorDetails = true;
+            //        options.Authority = "https://localhost:5001";
+            //        options.Audience = "api1";// The API resource scope issued in authorization server
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateAudience = false,
+            //            ValidIssuer = "https://localhost:5001",
+            //        };
+            //    });
+            //IdentityModelEventSource.ShowPII = true;
 
         }
 
@@ -59,6 +76,7 @@ namespace demoApp.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

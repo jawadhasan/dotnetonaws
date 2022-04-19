@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
@@ -12,19 +14,25 @@ namespace demoApp.Web.Controllers
     {
         private readonly ILogger<SamplesController> _logger;
         private readonly HttpClient _client;
-        private string BooksAPIEndpoint = "https://o6p76ra4e4xubup5vhmwwhg2v40agvms.lambda-url.eu-central-1.on.aws/"; //Get from Env
-       
+        private readonly IConfiguration _configuration;
+        private readonly string _externalAPIEndPoint = ""; //Get from configs
+        private readonly IHostingEnvironment _hostingEnv;
 
-        public SamplesController(ILogger<SamplesController> logger)
+        public SamplesController(ILogger<SamplesController> logger, IConfiguration configuration, IHostingEnvironment hostingEnv)
         {
             _logger = logger;
             _client = new HttpClient();
+            _configuration = configuration;
+            _externalAPIEndPoint = _configuration["ExternalAPIEndPoint"];
+            _hostingEnv = hostingEnv;
+
+
         }
 
         [HttpGet("getHttp")]
         public async Task<dynamic> GetHttp()
         {
-            var httpResponse = await _client.GetAsync(BooksAPIEndpoint);
+            var httpResponse = await _client.GetAsync(_externalAPIEndPoint);
 
             if (!httpResponse.IsSuccessStatusCode)
             {
@@ -35,6 +43,12 @@ namespace demoApp.Web.Controllers
             return Ok(content);
         }
 
+        [HttpGet("getSecure")]
+        public ActionResult GetSecure()
+        {
+            var payload = Guid.NewGuid().ToString("N");
+            return Ok(payload);
+        }
 
         [HttpGet("getEnv")]
         public dynamic GetEnv()
@@ -42,29 +56,32 @@ namespace demoApp.Web.Controllers
             dynamic payload = new
             {
                 Notes = "Environment.GetEnvironmentVariable('KEYNAME')",
-                BooksAPIEndpoint = Environment.GetEnvironmentVariable("BooksAPIEndpoint"),
-                Authority = Environment.GetEnvironmentVariable("Authority"),
-                DefaultConnection = Environment.GetEnvironmentVariable("DefaultConnection")
+                Environment = _hostingEnv.EnvironmentName,
+                ExternalAPIEndPoint = _configuration["ExternalAPIEndPoint"],
+                Authority = Environment.GetEnvironmentVariable("Authority"),              
+                DefaultConnection = _configuration["DefaultConnection"]//_configuration["ConnectionStrings:DefaultConnection"]
             };
 
             return Ok(payload);
         }
 
-
         [HttpGet("logSamples")]
         public dynamic LogSamples()
         {
             _logger.LogInformation("LogInformation");
-            _logger.LogWarning("LogWarning");
-            _logger.LogError("LogError");
+            _logger.LogWarning("LogWarning");            
             _logger.LogCritical("LogCritical");
             _logger.LogDebug("LogDebug");
             _logger.LogTrace("LogTrace");
-
-
             return Ok();
         }
 
+        [HttpGet("logError")]
+        public dynamic LogError()
+        {           
+            _logger.LogError("LogError");          
+            return Ok("_logger.LogError");
+        }
 
         [HttpGet("produceError")]
         public dynamic ProduceError()
