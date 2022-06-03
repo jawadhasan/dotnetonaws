@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -41,7 +42,8 @@ namespace demoApp.Web.Infrastructure
             //var result = JsonConvert.SerializeObject(customError);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            return context.Response.WriteAsync(ex.Message);//result
+            var result = JsonConvert.SerializeObject(ex.Message);
+            return context.Response.WriteAsync(result);//result
         }
     }
 }

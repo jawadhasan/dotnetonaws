@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Net;
 
 namespace demoApp.Web
 {
@@ -22,7 +26,7 @@ namespace demoApp.Web
 
         public static IConfiguration Configuration { get; private set; }
 
-       
+
         public void ConfigureServices(IServiceCollection services)
         {
             var connString = Configuration.GetSection("DefaultConnection").Value;
@@ -33,7 +37,7 @@ namespace demoApp.Web
             var userRepo = new UserRepository(connString);
             services.Add(new ServiceDescriptor(typeof(UserRepository), userRepo));
 
-         
+
 
             //AWS Services
             services.AddAWSService<IAmazonDynamoDB>();
@@ -45,7 +49,14 @@ namespace demoApp.Web
 
             services.AddControllers();
 
-            //services.AddAuthorization();
+            services.AddAuthorization();
+
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>{
+                    options.IncludeErrorDetails = true;
+                    options.TokenValidationParameters = GetCognitoTokenValidationParams();
+                });
+
             //services.AddAuthentication("Bearer")
             //    .AddJwtBearer("Bearer", options =>
             //    {
@@ -58,11 +69,11 @@ namespace demoApp.Web
             //            ValidIssuer = "https://localhost:5001",
             //        };
             //    });
-            //IdentityModelEventSource.ShowPII = true;
+
 
         }
 
-      
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -87,6 +98,38 @@ namespace demoApp.Web
                     await context.Response.WriteAsync("Welcome to running ASP.NET Core on AWS Lambda");
                 });
             });
+        }
+
+        private TokenValidationParameters GetCognitoTokenValidationParams()
+        {
+            var region = Configuration.GetSection("AppConfig:Region").Value;
+            var userPoolId = Configuration.GetSection("AppConfig:UserPoolId").Value;
+            var appClientId = Configuration.GetSection("AppConfig:AppClientId").Value;
+
+            var cognitoIssuer = $"https://cognito-idp.{region}.amazonaws.com/{userPoolId}";
+            var jwtKeySetUrl = $"{cognitoIssuer}/.well-known/jwks.json";
+            var cognitoAudience = appClientId;
+
+            return new TokenValidationParameters
+            {
+                IssuerSigningKeyResolver = (s, securityToken, identifier, parameters) =>
+                {
+                    // get JsonWebKeySet from AWS
+                    var json = new WebClient().DownloadString(jwtKeySetUrl);
+
+                    // serialize the result
+                    var keys = JsonConvert.DeserializeObject<JsonWebKeySet>(json).Keys;
+
+                    // cast the result to be the type expected by IssuerSigningKeyResolver
+                    return (IEnumerable<SecurityKey>)keys;
+                },
+                ValidIssuer = cognitoIssuer,
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateAudience = false
+                //ValidAudience = cognitoAudience
+            };
         }
     }
 }
