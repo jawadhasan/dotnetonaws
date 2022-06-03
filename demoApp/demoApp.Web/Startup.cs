@@ -46,7 +46,8 @@ namespace demoApp.Web
                 Region = RegionEndpoint.GetBySystemName("eu-central-1")//can read from appsetting.json
             });
             services.AddSingleton<TruckSensorRepo>();
-
+            
+            services.AddCors();
             services.AddControllers();
 
             services.AddAuthorization();
@@ -84,6 +85,12 @@ namespace demoApp.Web
             app.UseMiddleware<ExceptionHandler>();
 
             app.UseHttpsRedirection();
+
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseRouting();
 
