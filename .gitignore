@@ -28,6 +28,7 @@ Obj/
 
 .vscode/
 wwwroot/
+NDependOut/
 
 node_modules
 
