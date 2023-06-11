@@ -37,6 +37,8 @@ namespace demoApp.Web
             var userRepo = new UserRepository(connString);
             services.Add(new ServiceDescriptor(typeof(UserRepository), userRepo));
 
+            var notesRepo = new NotesRepository(connString);
+            services.Add(new ServiceDescriptor(typeof(NotesRepository), notesRepo));
 
 
             //AWS Services
