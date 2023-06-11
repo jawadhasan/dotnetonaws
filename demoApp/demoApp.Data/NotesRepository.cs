@@ -32,8 +32,8 @@ namespace demoApp.Data
         }
         public Note Insert(Note newNote)
         {
-            var sql = @"INSERT INTO notes(title,content,details, categoryid) 
-                        VALUES(@title,@content, @details, @categoryId) RETURNING id;";//SELECT CAST(SCOPE_IDENTITY() as int) for SQL Server
+            var sql = @"INSERT INTO notes(title,content,details, categoryid, userid) 
+                        VALUES(@title,@content, @details, @categoryId, @userId) RETURNING id;";//SELECT CAST(SCOPE_IDENTITY() as int) for SQL Server
 
             var id = _db.Query<int>(sql, newNote).Single();
             newNote.Id = id;
@@ -42,7 +42,7 @@ namespace demoApp.Data
         public Note Update(Note note)
         {
             var sql = @"UPDATE notes SET 
-                        title = @Title, content = @Content, details = @Details , categoryid = @CategoryId
+                        title = @Title, content = @Content, details = @Details , categoryid = @CategoryId, userid = @userId
                         WHERE id = @Id";
             _db.Execute(sql, note);
             return note;
