@@ -74,14 +74,16 @@ namespace demoApp.Web
             //    });
 
 
-            services.AddSwaggerGen(setupAction =>
-            {
-                setupAction.SwaggerDoc("dotnetonaws", new()
-                {
-                    Title = ".NET on AWS Web API",
-                    Version = "v1",
-                });
-            });
+            //services.AddSwaggerGen(setupAction =>
+            //{
+            //    setupAction.SwaggerDoc("dotnetonaws", new()
+            //    {
+            //        Title = ".NET on AWS Web API",
+            //        Version = "v1",
+            //    });
+            //});
+
+            services.AddSwaggerGen();
 
         }
 
@@ -114,11 +116,7 @@ namespace demoApp.Web
             });
 
             app.UseSwagger();
-            app.UseSwaggerUI(setupAction =>
-            {
-                setupAction.SwaggerEndpoint("/swagger/dotnetonaws/swagger.json","dotnetonaws");
-                setupAction.RoutePrefix = string.Empty; //if want doc UI on root
-            });
+            app.UseSwaggerUI();
         }
 
         private TokenValidationParameters GetCognitoTokenValidationParams()
