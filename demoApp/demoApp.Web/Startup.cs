@@ -13,7 +13,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Data;
 using System.Net;
+using demoApp.Web.Services;
+using demoApp.Web.Settings;
 
 namespace demoApp.Web
 {
@@ -41,6 +44,13 @@ namespace demoApp.Web
             services.Add(new ServiceDescriptor(typeof(NotesRepository), notesRepo));
 
 
+            services.AddTransient(opt => new VehicleRepository(connString));
+
+            // Add IDbConnection for using with Dapper
+            //services.AddTransient<IDbConnection>(option =>
+                //new NpgsqlConnection(hostContext.Configuration.GetConnectionString("DefaultConnection")));
+
+
             //AWS Services
             services.AddAWSService<IAmazonDynamoDB>();
             services.AddDefaultAWSOptions(new AWSOptions
@@ -48,7 +58,10 @@ namespace demoApp.Web
                 Region = RegionEndpoint.GetBySystemName("eu-central-1")//can read from appsetting.json
             });
             services.AddSingleton<TruckSensorRepo>();
-            
+
+            services.Configure<SQSSettings>(Configuration.GetSection("Queueing"));
+            services.AddSingleton<IEventPublisher, SQSEventPublisher>();
+
             services.AddCors();
             services.AddControllers();
 
