@@ -17,6 +17,7 @@ using System.Data;
 using System.Net;
 using demoApp.Web.Services;
 using demoApp.Web.Settings;
+using Npgsql;
 
 namespace demoApp.Web
 {
@@ -32,25 +33,23 @@ namespace demoApp.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connString = Configuration.GetSection("DefaultConnection").Value;
-
-            var productRepo = new ProductsRepository(connString);
-            services.Add(new ServiceDescriptor(typeof(ProductsRepository), productRepo));
-
-            var userRepo = new UserRepository(connString);
-            services.Add(new ServiceDescriptor(typeof(UserRepository), userRepo));
-
-            var notesRepo = new NotesRepository(connString);
-            services.Add(new ServiceDescriptor(typeof(NotesRepository), notesRepo));
-
-
-            services.AddTransient(opt => new VehicleRepository(connString));
 
             // Add IDbConnection for using with Dapper
-            //services.AddTransient<IDbConnection>(option =>
-                //new NpgsqlConnection(hostContext.Configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<IDbConnection>(option =>
+            new NpgsqlConnection(Configuration.GetConnectionString("DefaultConnection")));
 
 
+            services.AddTransient<ProductsRepository>();
+            services.AddTransient<UserRepository>();
+            services.AddTransient<NotesRepository>();
+            services.AddTransient<VehicleRepository>();
+
+           // var connString = Configuration.GetSection("DefaultConnection").Value;
+
+            //var productRepo = new ProductsRepository(connString);
+            //services.Add(new ServiceDescriptor(typeof(ProductsRepository), productRepo));
+
+         
             //AWS Services
             services.AddAWSService<IAmazonDynamoDB>();
             services.AddDefaultAWSOptions(new AWSOptions

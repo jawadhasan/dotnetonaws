@@ -12,9 +12,9 @@ namespace demoApp.Data
         private readonly IDbConnection _db;
 
         //ctor
-        public UserRepository(string connectionString)
+        public UserRepository(IDbConnection db)
         {
-            _db = new NpgsqlConnection(connectionString);
+            _db = db;
         }
 
 

@@ -11,9 +11,10 @@ namespace demoApp.Data
         private readonly IDbConnection _db;
 
         //ctor
-        public ProductsRepository(string connectionString)
+        public ProductsRepository(IDbConnection db)
         {
-            _db = new NpgsqlConnection(connectionString);
+            //_db = new NpgsqlConnection(connectionString);
+            _db = db;
         }
 
         public List<dynamic> GetAll()

@@ -3,7 +3,6 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using demoApp.Core;
-using Npgsql;
 
 namespace demoApp.Data
 {
@@ -11,9 +10,9 @@ namespace demoApp.Data
     {
         private readonly IDbConnection _db;
 
-        public VehicleRepository(string connString)
+        public VehicleRepository(IDbConnection db)
         {
-            _db = new NpgsqlConnection(connString);
+            _db = db;
         }
 
         public List<Vehicle> GetAll()

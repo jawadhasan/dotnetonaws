@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using Dapper;
 using demoApp.Core;
-using Npgsql;
 
 namespace demoApp.Data
 {
@@ -14,9 +11,9 @@ namespace demoApp.Data
         private readonly IDbConnection _db;
 
         //ctor
-        public NotesRepository(string connectionString)
+        public NotesRepository(IDbConnection db)
         {
-            _db = new NpgsqlConnection(connectionString);
+            _db = db;
         }
 
         public List<Note> GetAll()
