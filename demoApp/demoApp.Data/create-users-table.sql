@@ -1,0 +1,7 @@
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY NOT NULL, 
+  email VARCHAR(255) UNIQUE NOT NULL,
+  firstName VARCHAR(50),
+  lastName VARCHAR(50),
+  createdat TIMESTAMPTZ DEFAULT NOW()
+  );
