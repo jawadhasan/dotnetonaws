@@ -17,6 +17,4 @@
 
 [Queuing with SQS (Part-2)](https://hexquote.com/net-on-aws-queuing-with-sqs-part-2/)    
 
-[Queuing with SQS (Part-2)](https://hexquote.com/net-on-aws-queuing-with-sqs-part-2/)    
-
 [Queuing with SQS (Part-3)](https://hexquote.com/net-on-aws-queuing-with-sqs-part-3/)    
