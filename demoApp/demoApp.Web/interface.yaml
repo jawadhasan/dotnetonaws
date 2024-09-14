@@ -3,6 +3,33 @@ info:
   title: demoApp.Web
   version: '1.0'
 paths:
+  /api/Books:
+    get:
+      tags:
+        - Books
+      responses:
+        '200':
+          description: Success
+  /api/Books/categories:
+    get:
+      tags:
+        - Books
+      responses:
+        '200':
+          description: Success
+  /api/Books/getByCategoryId:
+    get:
+      tags:
+        - Books
+      parameters:
+        - name: catId
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
   /api/Fleet:
     get:
       tags:

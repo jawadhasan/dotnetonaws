@@ -93,6 +93,7 @@ namespace demoApp.Web
             services.AddScoped<UserRepository>();
             services.AddScoped<NotesRepository>();
             services.AddScoped<VehicleRepository>();
+            services.AddScoped<BookRepository>();
 
 
             services.AddSwaggerGen();
