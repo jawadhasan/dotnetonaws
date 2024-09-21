@@ -29,6 +29,27 @@ namespace demoApp.Web.Controllers
 
         }
 
+        [HttpGet("getwithauthors")]
+        public async Task<IActionResult> GetWithAuthors()
+        {
+            var data = await _bookRepo.GetBooksWithAuthorAsync();
+            return Ok(data);
+        }
+
+        //[HttpGet("getwithauthorIds")]
+        //public async Task<IActionResult> GetWithAuthorIds()
+        //{
+        //    var data = await _bookRepo.GetBookWithAuthorIdsAsync();
+        //    return Ok(data);
+        //}
+
+        [HttpGet("author/{id}")]
+        public async Task<IActionResult> Author(int id)
+        {
+            var data = await _bookRepo.GetAuthor(id);
+            return Ok(data);
+        }
+
 
         [HttpGet("categories")]
         public async Task<IActionResult> GetCategories()
@@ -43,6 +64,9 @@ namespace demoApp.Web.Controllers
             var data = await _bookRepo.GetBooksByCategory(catId);
             return Ok(data);
         }
+
+
+
 
     }
 }
