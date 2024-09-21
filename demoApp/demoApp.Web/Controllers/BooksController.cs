@@ -21,6 +21,14 @@ namespace demoApp.Web.Controllers
             var data = await _bookRepo.GetBooks();
             return Ok(data);
         }
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var book = _bookRepo.GetById(id);
+            return Ok(book);
+
+        }
+
 
         [HttpGet("categories")]
         public async Task<IActionResult> GetCategories()
