@@ -23,6 +23,18 @@ namespace demoApp.Data
             return _db.Query<User>("SELECT * FROM users").ToList();
         }
 
+        public List<User> GetUsersByName(string searchTerm)
+        {
+            var sql = "SELECT * FROM users WHERE (firstname || ' ' || lastname) ILIKE @NamePattern";
+
+            return _db.Query<User>(sql,
+                new
+                {
+                    NamePattern = $"{searchTerm}%" // Add % at the end for names starting with the search term
+                }).ToList(); 
+        }
+
+
         public User Insert(User newUser)
         {
             var sql = @"INSERT INTO users(email,firstname,lastname) 
@@ -54,6 +66,17 @@ namespace demoApp.Data
 
             var sql = "DELETE FROM users WHERE id = @Id";
             _db.Execute(sql, new { id });
+        }
+
+        public List<Post> GetPosts()
+        {
+            return _db.Query<Post>("SELECT * FROM userposts").ToList();
+        }
+
+        public List<Post> GetPostsForUser(int userId)
+        {
+            var sql = "SELECT * FROM userposts WHERE userid = @userId";
+            return _db.Query<Post>(sql, new { userId }).ToList();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using demoApp.Core;
+﻿using System.Collections.Generic;
+using demoApp.Core;
 using demoApp.Data;
 using demoApp.Web.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,21 @@ namespace demoApp.Web.Controllers
         {
             var users = _userRepository.GetAll();
             return Ok(users);
+        }
+
+        [HttpGet("getUsersByName")]
+        public IActionResult GetUsersByName(string searchTerm)
+        {
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                var users = _userRepository.GetUsersByName(searchTerm);
+
+                if(users != null) return Ok(users);
+
+                 return Ok(new List<User>{new User(){Id = -1}});
+
+            }
+            return Ok(new List<User>{new User(){Id = -1}});
         }
 
         [HttpGet("{id}")]
@@ -67,6 +83,25 @@ namespace demoApp.Web.Controllers
             var updatedUser = _userRepository.Update(editableUser);
 
             return Ok(updatedUser);
+        }
+
+
+        [HttpGet("posts")]
+        public IActionResult GetPosts()
+        {
+            var data = _userRepository.GetPosts();
+            return Ok(data);
+        }
+
+        [HttpGet("posts/{id}")]
+        public IActionResult GetPostsForUser(int id)
+        {
+            if (id == -1)
+            {
+                return Ok(_userRepository.GetPosts());
+            }
+            var data = _userRepository.GetPostsForUser(id);
+            return Ok(data);
         }
     }
 }
